@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--<head th:replace="~{plantilla/template :: head}">-->
+
+<head th:replace="~{plantilla/template3 :: head}">
+
+
+</head>
+
+<body>
+	<header th:replace="~{plantilla/template3 :: header}"></header>
+	<!-- parámetro Titulo -->
+	<div class="container">
+		<h1 th:text="${titulo}"></h1>
+		<!-- Muestra como texto simple -->
+		<!-- <p th:text="${productos}"></p> -->
+	</div>
+	<!-- parámetro Listado -->
+	<div class="container" style="min-height: calc(100vh - 170px); padding-bottom: 70px;">		
+		<table class="table">
+			<thead>
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">CODIGO</th>
+					<th scope="col">NOMBRE</th>
+					<th scope="col">CONSOLA</th>
+					<th scope="col">GENERO</th>
+					<th scope="col">DESCRIPCION</th>
+					<th scope="col">STOCK</th>
+					<th scope="col">PRECIO</th>					
+				</tr>
+			</thead>
+			<tbody class="table-group-divider">
+				<tr th:each="videojuego : ${videojuegos}">
+					<td th:text="${videojuego.id}"></td>
+					<td th:text="${videojuego.codigo}"></td>
+					<td th:text="${videojuego.nombre}"></td>
+					<td th:text="${videojuego.consola}"></td>
+					<td th:text="${videojuego.genero}"></td>
+					<td th:text="${videojuego.descripcion}"></td>
+					<td th:text="${videojuego.stock}"></td>
+					<td th:text="${videojuego.precio}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<footer th:replace="~{plantilla/template3 :: footer}"></footer>
+</body>
+
+</html>

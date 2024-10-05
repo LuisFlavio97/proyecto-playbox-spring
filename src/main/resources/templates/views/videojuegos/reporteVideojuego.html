@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--<head th:replace="~{plantilla/template :: head}">-->
+	
+<head th:replace="~{plantilla/template :: head}">
+
+<body>
+	<header th:replace="~{plantilla/template :: header}"></header>	
+	<main class="main" style="min-height: calc(100vh - 170px); padding-bottom: 70px;">
+	        <!-- Hero Section -->
+	        <section id="hero" class="hero section">
+	            <div class="container">
+	                <div class="row gy-4">
+	                    <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
+	                        <h1 data-aos="fade-up" th:text="${titulo}">Reporte de Productos</h1>
+	                        <h3 data-aos="fade-up" th:text="${subtitulo}">Subtítulo</h3>
+	                    </div>
+	                </div>
+	            </div>
+	        </section><!-- /Hero Section -->
+
+	        <section id="reporteVideojuegos">
+	            <div class="container">
+	                <form action="/reportes/reportPreview" method="get" class="form-inline mt-3">
+	                    <div class="form-group">
+	                        <label for="parameter1" class="sr-only">Parámetro 1:</label>
+	                        <p>Aquí se puede descargar el reporte de videojuegos del 2024</p>
+	                    </div>
+	                    <div class="form-group w-100 mt-2">
+	                        <button type="submit" class="btn btn-secondary">Previsualizar Reporte</button>
+	                    </div>
+	                </form>
+	            </div>
+	        </section>
+	    </main>
+
+			<footer th:replace="~{plantilla/template :: footer}"></footer>       
+
+</body>
+
+</html>
