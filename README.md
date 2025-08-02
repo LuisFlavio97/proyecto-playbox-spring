@@ -51,7 +51,7 @@ Proyecto_Playbox/
 
 ```bash
 git clone https://github.com/LuisFlavio97/proyecto-playbox-spring.git
-cd inventario
+cd proyecto-playbox-spring
 ```
 
 2. Crea una base de datos en MySQL llamada bd_playbox
