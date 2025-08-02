@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantilla/template2 :: head}"></head>
+<body>
+<header th:replace="~{plantilla/template2 :: header}"></header>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 75vh;">
+  <div class="card w-50">
+    <div class="card-body">
+      <h2 class="card-title text-center">Cambiar Contraseña</h2>
+      <form th:action="@{/auth/cambiarContrasena}" method="post">
+        <div class="form-group">
+          <label for="nombreUsuario">Nombre de usuario:</label>
+          <input type="text" class="form-control" id="nombreUsuario" name="nombreUsuario" required>
+        </div>
+        <div class="form-group">
+          <label for="nuevaContrasena">Nuevo Password:</label>
+          <input type="password" class="form-control" id="nuevaContrasena" name="nuevaContrasena" required>
+        </div>
+        <div class="form-group">
+          <label for="confirmarContrasena">Repita Nuevo Password:</label>
+          <input type="password" class="form-control" id="confirmarContrasena" name="confirmarContrasena" required>
+        </div>
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <a th:href="@{/auth/login}" class="btn btn-danger ml-3">Volver</a>
+        </div>
+      </form>
+      <div th:if="${param.error}" class="alert alert-danger mt-3">
+        <p th:text="${param.error}"></p>
+      </div>
+    </div>
+  </div>
+</div>
+<footer th:replace="~{plantilla/template2 :: footer}"></footer>
+
+<!-- Agrega el script de Bootstrap y jQuery en tu plantilla -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

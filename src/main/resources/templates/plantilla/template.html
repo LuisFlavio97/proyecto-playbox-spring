@@ -34,20 +34,30 @@
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/views/videojuegos/}">Videojuegos</a>
                         </li>
-                        <li class="nav-item dropdown">
+                        <li class="nav-item">
                             <a class="nav-link" th:href="@{/reportes/ver}">
                                 Reporte de Videojuegos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/transaccion/list}">
+                                Movimientos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/views/usuarios/activos}">
+                                Usuarios
                             </a>
                         </li>
                     </ul>
                 </div>
 				
 				<!-- Botón de Cerrar Sesión -->
-				<div class="ml-auto my-2 my-lg-0">
-					<a class="btn btn-danger" href="/login">
-						Cerrar Sesión
-					</a>
-				</div>
+                <div class="ml-auto my-2 my-lg-0">
+                    <form th:action="@{/auth/logout}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
+                    </form>
+                </div>
             </div>
         </nav>
 							
@@ -80,7 +90,7 @@
     <!-- Pie de página -->
     <footer th:fragment="footer" class="bg-dark text-center text-white fixed-bottom">
         <div class="container">
-            <p>Copyright Cibertec LP-II &copy; - 2024</p>
+            <p>Copyright Playbox  &copy; 2025</p>
         </div>
     </footer>
 

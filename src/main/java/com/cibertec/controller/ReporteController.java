@@ -8,6 +8,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import com.cibertec.models.service.IReporteService;
 
 @Controller
 @RequestMapping("/reportes")
+@PreAuthorize("hasRole('Administrador')")
 public class ReporteController {
 
 	@Autowired
@@ -50,15 +52,15 @@ public class ReporteController {
 		}
 		return ResponseEntity.status(500).build();
 	}
-	
-	
+
+
 	@GetMapping("/reportPreview")
 	public String previewReporte(@RequestParam Map<String, Object> parameters, Model model) throws Exception {
 
-			String htmlReport = reporteService.generaReportetHtml("Reporte_Playbox", parameters);
-			model.addAttribute("titulo", "Reportes del Sistema");
-			model.addAttribute("subtitulo", "Reporte - Previsualizacion de Reporte");
-            model.addAttribute("reporte", htmlReport);
+		String htmlReport = reporteService.generaReportetHtml("Reporte_Playbox", parameters);
+		model.addAttribute("titulo", "Reportes del Sistema");
+		model.addAttribute("subtitulo", "Reporte - Previsualizacion de Reporte");
+		model.addAttribute("reporte", htmlReport);
 
 		return "/views/videojuegos/reportePreview";
 	}

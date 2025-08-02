@@ -1,66 +1,99 @@
 package com.cibertec.config;
 
+import com.cibertec.models.service.DetalleUsuarioService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
-	
-	private final CustomAuthenticationSuccessHandler successHandler;
-	
-	public SecurityConfig(CustomAuthenticationSuccessHandler successHandler) {
+
+    private final CustomAuthenticationSuccessHandler successHandler;
+    private final DetalleUsuarioService detalleUsuarioService;
+
+    // Constructor para inyectar los servicios necesarios
+    public SecurityConfig(DetalleUsuarioService detalleUsuarioService, CustomAuthenticationSuccessHandler successHandler) {
+        this.detalleUsuarioService = detalleUsuarioService;
         this.successHandler = successHandler;
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/", "/home", "/login").permitAll()
-                .anyRequest().authenticated()
-            )
-            .formLogin((form) -> form
-                .loginPage("/login")
-                .successHandler(successHandler) // Utiliza el CustomAuthenticationSuccessHandler
-                .permitAll()
-            )
-            .logout((logout) -> logout.permitAll());
-
-        return http.build();
+    public SecurityFilterChain configureSecurity(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/static/**", "/css/**", "/js/**","/images/**").permitAll()
+                            .requestMatchers("/auth/**").permitAll()
+                            // Proteger explícitamente la ruta de videojuegos
+                            .requestMatchers("/home","/views/videojuegos/**","/views/usuarios/**","/transaccion/**","/reportes/**").hasRole("Administrador")
+                            .requestMatchers("/catalogo/**").hasAnyRole("Proveedor", "Cliente", "User")
+                            .anyRequest().authenticated();
+                })
+                .formLogin(login -> {
+                    login.loginPage("/auth/login")
+                            .successHandler(successHandler)
+                            .usernameParameter("nomusuario")
+                            .passwordParameter("password")
+                            .failureUrl("/auth/login?error=Credenciales incorrectas")
+                            .permitAll();
+                })
+                .logout(logout -> {
+                    logout.logoutUrl("/auth/logout")
+                            .logoutSuccessUrl("/auth/login?logout=Sesión cerrada exitosamente")
+                            .invalidateHttpSession(true)
+                            .deleteCookies("JSESSIONID")
+                            .clearAuthentication(true)
+                            .addLogoutHandler((request, response, authentication) -> {
+                                SessionRegistry sessionRegistryBean = sessionRegistry();
+                                sessionRegistryBean.removeSessionInformation(request.getSession().getId());
+                            })
+                            .permitAll();
+                })
+                .sessionManagement(session -> {
+                    session
+                            .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                            .maximumSessions(1)
+                            .maxSessionsPreventsLogin(false) // Invalida la sesión anterior
+                            .expiredUrl("/auth/login?error=Sesión expirada")
+                            .sessionRegistry(sessionRegistry());
+                    session.invalidSessionUrl("/auth/login?error=Sesión inválida");
+                    session.sessionFixation().migrateSession();
+                })
+                .exceptionHandling(exceptions -> {
+                    exceptions
+                            .accessDeniedHandler((request, response, accessDeniedException) -> {
+                                response.sendRedirect("/error/access-denied");
+                            })
+                            .authenticationEntryPoint((request, response, authException) -> {
+                                response.sendRedirect("/auth/login?authError=true");
+                            });
+                })
+                .authenticationProvider(getAuthenticationProvider())
+                .build();
     }
 
     @Bean
-    UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.builder()
-            .username("Fuhrer")
-            .password(passwordEncoder.encode("123456"))
-            .roles("Administrador")
-            .build());
-        manager.createUser(User.builder()
-            .username("Peluchin")
-            .password(passwordEncoder.encode("7891011"))
-            .roles("Proveedor")
-            .build());
-        manager.createUser(User.builder()
-            .username("Luis")
-            .password(passwordEncoder.encode("123"))
-            .roles("Cliente")
-            .build());
-        return manager;
+    public AuthenticationProvider getAuthenticationProvider() {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(detalleUsuarioService); // Utiliza el servicio DetalleUsuarioService
+        daoAuthenticationProvider.setPasswordEncoder(new BCryptPasswordEncoder()); // Utiliza BCryptPasswordEncoder para la codificación de contraseñas
+        return daoAuthenticationProvider;
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
     }
 }

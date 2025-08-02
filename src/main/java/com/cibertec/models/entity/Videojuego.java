@@ -53,7 +53,10 @@ public class Videojuego implements Serializable {
 		@Column(name = "precio")
 		@NotNull
 		private BigDecimal precio;
-		
+
+		@Column(name = "activo")
+		private Boolean activo = true;
+
 //		@Temporal(TemporalType.TIMESTAMP)
 //		private Date createdAt;
 //		@Temporal(TemporalType.TIMESTAMP)
@@ -152,6 +155,14 @@ public class Videojuego implements Serializable {
 
 		public void setPrecio(BigDecimal precio) {
 			this.precio = precio;
+		}
+
+		public Boolean getActivo() {
+			return activo;
+		}
+
+		public void setActivo(Boolean activo) {
+			this.activo = activo;
 		}
 
 		@Override

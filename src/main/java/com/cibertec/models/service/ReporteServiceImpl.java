@@ -22,6 +22,7 @@ import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleHtmlExporterConfiguration;
 import net.sf.jasperreports.export.SimpleHtmlExporterOutput;
 import net.sf.jasperreports.export.SimpleHtmlReportConfiguration;
+import java.io.File;
 
 @Service
 public class ReporteServiceImpl implements IReporteService {
@@ -61,6 +62,11 @@ public class ReporteServiceImpl implements IReporteService {
         parameters.put("IMAGE_DIR", this.getClass().getResource("/img/").toString());
         parameters.put("REPOR_DIR", "classpath:/reportes/");
         parameters.put("FECHA_REPORTE", "Fecha de Reporte: Hoy, " + formattedDateTime);
+
+        File imageDir = new File("target/jasperImages");
+        if (!imageDir.exists()) {
+            imageDir.mkdirs();
+        }
 
         try (InputStream jasperStream = this.getClass().getResourceAsStream("/reportes/" + reportName + ".jrxml");
                 Connection connection = dataSource.getConnection()) {

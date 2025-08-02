@@ -31,3 +31,21 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de entorno y configuración personal
+.env
+*.log
+/src/main/resources/application.properties
+
+# Archivos de compilación
+*.class
+
+# Archivos temporales de Windows/macOS/Linux
+*.swp
+*.swo
+*.bak
+*.tmp

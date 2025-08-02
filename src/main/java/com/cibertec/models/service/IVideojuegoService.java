@@ -13,4 +13,8 @@ public interface IVideojuegoService {
 	public Videojuego buscarPorId(Integer Id);
 	
 	public void eliminar(Integer Id);
+
+	void anular(int id);
+
+	boolean tieneTransacciones(int idVideojuego);
 }
